@@ -20,21 +20,55 @@ green = (0,255,0)
 score_font = pygame.font.Font("CHILLER.TTF", 30)
 exit_font = pygame.font.Font("impact.ttf", 60)
 
+# Sets the speed for the snake
+clock = pygame.time.Clock()
+
 quit_game = False
 
 # Snake is 20x20 start position is center of screen
 snake_x = (length-20)/2
 snake_y = (height-20)/2
+# Make sure snake aligns correct in the grid
+if (length/20) % 2 == 0:
+    snake_x += 10
+if (height/20) % 2 == 0:
+    snake_y += 10
+
+# Holds the value of x and y changes in the snake
+snake_x_change = 0
+snake_y_change = 0
 
 
 while not quit_game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit_game = True
-    
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                snake_x_change = -20
+                snake_y_change = 0
+            if event.key == pygame.K_RIGHT:
+                snake_x_change = 20
+                snake_y_change = 0
+            if event.key == pygame.K_UP:
+                snake_x_change = 0
+                snake_y_change = -20
+            if event.key == pygame.K_DOWN:
+                snake_x_change = 0
+                snake_y_change = 20
+
+    snake_x += snake_x_change
+    snake_y += snake_y_change
+
+    screen.fill(green)
+
     # Create rectangle for snake
     pygame.draw.rect(screen, red, [snake_x, snake_y, 20, 20])
     pygame.display.update()
+
+    # Sets the speed at which the interaction loop runs
+    clock.tick(5)
 
 pygame.quit()
 quit()
