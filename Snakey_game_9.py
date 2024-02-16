@@ -27,6 +27,12 @@ pause_font = pygame.font.Font("impact.ttf", pause_font_size)
 # Sets the speed for the snake
 clock = pygame.time.Clock()
 
+# Create snake - replaces the previous snake drawing section in main loop
+def draw_snake(snake_list):
+    print(f"Snake list: {snake_list}") # For testing purposes
+    for i in snake_list:
+        pygame.draw.rect(screen, red, [i[0], i[1], 20, 20])
+
 # Function to display messages
 def message(msg, txt_colour, bkgd_colour, msg_font):
     txt = msg_font.render(msg, True, txt_colour, bkgd_colour)
@@ -49,6 +55,8 @@ def game_loop():
     # Holds the value of x and y changes in the snake
     snake_x_change = 0
     snake_y_change = 0
+    snake_list = []
+    snake_length = 1
 
     # Setting a random position for food
     food_x = round(random.randrange(20, length - 20) / 20) * 20
@@ -125,8 +133,18 @@ def game_loop():
         pygame.draw.rect(screen, food, [food_x, food_y, 20, 20])
         pygame.display.update()
 
-        # Create rectangle for snake
-        pygame.draw.rect(screen, red, [snake_x, snake_y, 20, 20])
+        # Create snake (replaces simple rectangle)
+        snake_head = [snake_x, snake_y]
+        snake_list.append(snake_head)
+        if len(snake_list) > snake_length:
+            del snake_list[0]
+
+        for x in snake_list[:-1]:
+            if x == snake_head:
+                game_over = True
+
+        draw_snake(snake_list)
+
         pygame.display.update()
 
         # Collision dectection with food
@@ -134,6 +152,9 @@ def game_loop():
             # Set new random position for food if snake touches it
             food_x = round(random.randrange(20, length - 20) / 20) * 20
             food_y = round(random.randrange(20, height - 20) / 20) * 20
+
+            # Increases snake length
+            snake_length += 1
 
         # Sets the speed at which the interaction loop runs
         clock.tick(5)
